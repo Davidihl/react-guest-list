@@ -2,6 +2,7 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
+import DeleteIcon from '@mui/icons-material/Delete';
 import {
   Button,
   IconButton,
@@ -47,10 +48,10 @@ export default function App() {
   };
 
   // Change attending
-  const deleteGuest = (event, index) => {
-    const isAttending = [...guests];
-    // concat array
-    setGuests(isAttending);
+  const deleteGuest = (uid) => {
+    const currentGuestlist = [...guests];
+    const newGuestlist = currentGuestlist.filter((guest) => guest.uid !== uid);
+    setGuests(newGuestlist);
   };
 
   // Add user to array by pressing enter
@@ -82,6 +83,9 @@ export default function App() {
                   {guest.attends ? 'is attanding' : 'is not attending'}
                 </span>
                 <Switch onClick={(event) => handleAttending(event, index)} />
+                <IconButton onClick={(event) => deleteGuest(guest.uid)}>
+                  <DeleteIcon />
+                </IconButton>
               </div>
             </div>
           );
