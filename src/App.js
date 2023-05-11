@@ -1,13 +1,14 @@
-import '@fontsource/roboto/300.css';
-import '@fontsource/roboto/400.css';
-import '@fontsource/roboto/500.css';
-import '@fontsource/roboto/700.css';
 import DeleteIcon from '@mui/icons-material/Delete';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import {
+  AppBar,
+  Box,
   Button,
-  IconButton,
-  Switch,
+  Container,
+  Icon,
+  Paper,
   TextField,
+  Toolbar,
   Typography,
 } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
@@ -80,10 +81,55 @@ export default function App() {
   };
 
   return (
-    <div className={styles.container}>
-      <Typography variant="h1" gutterBottom>
-        Guest List
-      </Typography>
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static" color="secondary">
+        <Toolbar>
+          <Icon>
+            <PeopleAltIcon sx={{ paddingRight: '8px' }} />
+          </Icon>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Guest list
+          </Typography>
+          <Button color="inherit">Clear all</Button>
+        </Toolbar>
+      </AppBar>
+      <Container maxWidth="md">
+        <Paper position="static" className={styles.paper}>
+          <Typography variant="h5" component="div">
+            Add Guests
+          </Typography>
+          <form
+            className={styles.form}
+            onSubmit={(event) => event.preventDefault()}
+          >
+            <TextField
+              label="First name"
+              variant="filled"
+              value={firstName}
+              onChange={(event) => setFirstName(event.currentTarget.value)}
+              inputRef={anotherGuest}
+              className={styles.textField}
+            />
+            <TextField
+              label="Last name"
+              variant="filled"
+              value={lastName}
+              onChange={(event) => setLastName(event.currentTarget.value)}
+              onKeyDown={handleKeyDown}
+              className={styles.textField}
+            />
+            <Button
+              variant="contained"
+              size="large"
+              onClick={() => addGuest()}
+              color="secondary"
+            >
+              Add guest
+            </Button>
+          </form>
+        </Paper>
+      </Container>
+
       <div className={styles.guestList}>
         {guests.map((guest, index) => {
           return (
@@ -115,30 +161,6 @@ export default function App() {
           );
         })}
       </div>
-      <div id="form">
-        <form
-          className={styles.form}
-          onSubmit={(event) => event.preventDefault()}
-        >
-          <TextField
-            label="First name"
-            variant="filled"
-            value={firstName}
-            onChange={(event) => setFirstName(event.currentTarget.value)}
-            inputRef={anotherGuest}
-          />
-          <TextField
-            label="Last name"
-            variant="filled"
-            value={lastName}
-            onChange={(event) => setLastName(event.currentTarget.value)}
-            onKeyDown={handleKeyDown}
-          />
-          <Button variant="contained" size="large" onClick={() => addGuest()}>
-            Add guest
-          </Button>
-        </form>
-      </div>
-    </div>
+    </Box>
   );
 }
