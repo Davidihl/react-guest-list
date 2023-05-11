@@ -11,54 +11,71 @@ import {
   Typography,
 } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
-import { uid } from 'uid';
 import styles from './App.module.scss';
 
 export default function App() {
+  // API configuration
+  const baseUrl = 'http://localhost:4000';
+
+  // Guest list variables
   const anotherGuest = useRef(null);
   const [guests, setGuests] = useState([]);
-  const [name, setName] = useState('');
+  const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
 
-  // Debug
+  // API get all users on load
   useEffect(() => {
-    console.log(guests);
-  }, [guests]);
+    async function getAllGuests() {
+      const response = await fetch(`${baseUrl}/guests`);
+      const allGuests = await response.json();
 
-  // Add user to array by clicking
-  const addGuest = () => {
-    const newGuest = {
-      uid: uid(),
-      firstName: name,
-      lastName: lastName,
-      attends: false,
-    };
+      setGuests(allGuests);
+    }
+
+    getAllGuests().catch((error) => {
+      console.log(error);
+    });
+  }, []);
+
+  // API create user
+  async function addGuest() {
+    const response = await fetch(`${baseUrl}/guests`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        firstName: firstName,
+        lastName: lastName,
+      }),
+    });
+    const createdGuest = await response.json();
+    setGuests([...guests, createdGuest]);
     anotherGuest.current.focus();
-    setGuests([...guests, newGuest]);
-    setName('');
+    setFirstName('');
     setLastName('');
-  };
+  }
 
   // Change attending
-  const handleAttending = (event, index) => {
-    const isAttending = [...guests];
-    isAttending[index].attends = !isAttending[index].attends;
-    setGuests(isAttending);
-  };
+  // const handleAttending = (event, index) => {
+  //   const isAttending = [...guests];
+  //   isAttending[index].attends = !isAttending[index].attends;
+  //   setGuests(isAttending);
+  // };
 
-  // Change attending
-  const deleteGuest = (guestUid) => {
-    const currentGuestlist = [...guests];
-    const newGuestlist = currentGuestlist.filter(
-      (guest) => guest.uid !== guestUid,
-    );
-    setGuests(newGuestlist);
-  };
+  // Deleate guest
+  // const deleteGuest = (guestUid) => {
+  //   const currentGuestlist = [...guests];
+  //   const newGuestlist = currentGuestlist.filter(
+  //     (guest) => guest.uid !== guestUid,
+  //   );
+  //   setGuests(newGuestlist);
+  // };
 
   // Add user to array by pressing enter
-  const handleKeyDown = (event) => {
+  const handleKeyDown = async (event) => {
     if (event.key === 'Enter') {
-      addGuest();
+      await addGuest();
     }
   };
 
@@ -71,7 +88,7 @@ export default function App() {
         {guests.map((guest, index) => {
           return (
             <div
-              key={`guest-${guest.uid}`}
+              key={`guest-${guest.id}`}
               data-test-id="guest"
               className={styles.guest}
             >
@@ -81,7 +98,7 @@ export default function App() {
 
               <div className={styles.guestControl}>
                 <span>
-                  {guest.attends ? 'is attanding' : 'is not attending'}
+                  {guest.attends ? 'is attending' : 'is not attending'}
                 </span>
                 <Switch
                   onClick={(event) => handleAttending(event, index)}
@@ -106,8 +123,8 @@ export default function App() {
           <TextField
             label="First name"
             variant="filled"
-            value={name}
-            onChange={(event) => setName(event.currentTarget.value)}
+            value={firstName}
+            onChange={(event) => setFirstName(event.currentTarget.value)}
             inputRef={anotherGuest}
           />
           <TextField
