@@ -10,7 +10,6 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import Box from '@mui/material/Box';
 import { useEffect, useRef, useState } from 'react';
 import { uid } from 'uid';
 import styles from './App.module.scss';
@@ -48,9 +47,11 @@ export default function App() {
   };
 
   // Change attending
-  const deleteGuest = (uid) => {
+  const deleteGuest = (guestUid) => {
     const currentGuestlist = [...guests];
-    const newGuestlist = currentGuestlist.filter((guest) => guest.uid !== uid);
+    const newGuestlist = currentGuestlist.filter(
+      (guest) => guest.uid !== guestUid,
+    );
     setGuests(newGuestlist);
   };
 
@@ -82,8 +83,14 @@ export default function App() {
                 <span>
                   {guest.attends ? 'is attanding' : 'is not attending'}
                 </span>
-                <Switch onClick={(event) => handleAttending(event, index)} />
-                <IconButton onClick={(event) => deleteGuest(guest.uid)}>
+                <Switch
+                  onClick={(event) => handleAttending(event, index)}
+                  aria-label={`attending ${guest.firstName} ${guest.lastName}`}
+                />
+                <IconButton
+                  onClick={() => deleteGuest(guest.uid)}
+                  aria-label={`Remove ${guest.firstName} ${guest.lastName}`}
+                >
                   <DeleteIcon />
                 </IconButton>
               </div>
