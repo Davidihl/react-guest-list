@@ -6,7 +6,9 @@ import {
   Button,
   Container,
   Icon,
+  IconButton,
   Paper,
+  Switch,
   TextField,
   Toolbar,
   Typography,
@@ -19,12 +21,14 @@ export default function App() {
   const baseUrl = 'http://localhost:4000';
 
   // Guest list variables
-  const anotherGuest = useRef(null);
-  const [guests, setGuests] = useState([]);
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const anotherGuest = useRef(null); // Used for changing the focus on first name after first submit
+  const [guests, setGuests] = useState([]); // Array to store and render the guest list
+  const [firstName, setFirstName] = useState(''); // form field used for first name
+  const [lastName, setLastName] = useState(''); // form field used for last name
+  const [firstNameValid, setFirstNameValid] = useState(true); // validation for first name input
+  const [lastNameValid, setLastNameValid] = useState(true); // validation for last name input
 
-  // API get all users on load
+  // On first load, call API and load all saved guests
   useEffect(() => {
     async function getAllGuests() {
       const response = await fetch(`${baseUrl}/guests`);
@@ -57,6 +61,26 @@ export default function App() {
     setLastName('');
   }
 
+  // Validate the input on submit
+  const formValidation = async () => {
+    if (firstName.length > 0) {
+      if (lastName.length > 0) {
+        setFirstNameValid(true);
+        setLastNameValid(true);
+        await addGuest();
+      } else {
+        setFirstNameValid(true);
+        setLastNameValid(false);
+      }
+    } else if (lastName.length > 0) {
+      setFirstNameValid(false);
+      setLastNameValid(true);
+    } else {
+      setFirstNameValid(false);
+      setLastNameValid(false);
+    }
+  };
+
   // Change attending
   // const handleAttending = (event, index) => {
   //   const isAttending = [...guests];
@@ -76,7 +100,7 @@ export default function App() {
   // Add user to array by pressing enter
   const handleKeyDown = async (event) => {
     if (event.key === 'Enter') {
-      await addGuest();
+      await formValidation();
     }
   };
 
@@ -109,6 +133,9 @@ export default function App() {
               onChange={(event) => setFirstName(event.currentTarget.value)}
               inputRef={anotherGuest}
               className={styles.textField}
+              required
+              helperText="First name required"
+              error={!firstNameValid}
             />
             <TextField
               label="Last name"
@@ -117,50 +144,57 @@ export default function App() {
               onChange={(event) => setLastName(event.currentTarget.value)}
               onKeyDown={handleKeyDown}
               className={styles.textField}
+              required
+              helperText="Last name required"
+              error={!lastNameValid}
             />
             <Button
               variant="contained"
               size="large"
-              onClick={() => addGuest()}
+              onClick={() => formValidation()}
               color="secondary"
+              className={styles.formButton}
             >
               Add guest
             </Button>
           </form>
         </Paper>
+        <Paper
+          position="static"
+          className={`${styles.paper} ${styles.guestList}`}
+        >
+          {guests.map((guest, index) => {
+            return (
+              <div
+                key={`guest-${guest.id}`}
+                data-test-id="guest"
+                className={styles.guest}
+              >
+                <div>
+                  {guest.firstName} {guest.lastName}
+                </div>
+
+                <div className={styles.guestControl}>
+                  <span>
+                    {guest.attends ? 'is attending' : 'is not attending'}
+                  </span>
+                  <Switch
+                    onClick={(event) => handleAttending(event, index)}
+                    aria-label={`attending ${guest.firstName} ${guest.lastName}`}
+                  />
+                  <IconButton
+                    onClick={() => deleteGuest(guest.uid)}
+                    aria-label={`Remove ${guest.firstName} ${guest.lastName}`}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </div>
+              </div>
+            );
+          })}
+        </Paper>
+        <button onClick={() => formValidation()}>Debug</button>
       </Container>
-
-      <div className={styles.guestList}>
-        {guests.map((guest, index) => {
-          return (
-            <div
-              key={`guest-${guest.id}`}
-              data-test-id="guest"
-              className={styles.guest}
-            >
-              <div>
-                {guest.firstName} {guest.lastName}
-              </div>
-
-              <div className={styles.guestControl}>
-                <span>
-                  {guest.attends ? 'is attending' : 'is not attending'}
-                </span>
-                <Switch
-                  onClick={(event) => handleAttending(event, index)}
-                  aria-label={`attending ${guest.firstName} ${guest.lastName}`}
-                />
-                <IconButton
-                  onClick={() => deleteGuest(guest.uid)}
-                  aria-label={`Remove ${guest.firstName} ${guest.lastName}`}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </div>
-            </div>
-          );
-        })}
-      </div>
     </Box>
   );
 }

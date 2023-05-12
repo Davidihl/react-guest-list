@@ -26,9 +26,7 @@
 
 .guestList {
   display: flex;
-  flex-direction: column;
-  min-width: 200px;
-  max-width: 400px;
+  flex-direction: column-reverse;
   width: 100%;
 }
 
@@ -43,4 +41,8 @@
 
 .textField {
   flex-grow: 1;
+}
+
+.formButton {
+  margin-bottom: 50px;
 }
