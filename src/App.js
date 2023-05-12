@@ -40,7 +40,6 @@ export default function App() {
   // On first load, call API and load all saved guests
   useEffect(() => {
     async function getAllGuests() {
-      setLoading(true);
       const response = await fetch(`${baseUrl}/guests`);
       const allGuests = await response.json();
 
@@ -68,7 +67,7 @@ export default function App() {
     const createdGuest = await response.json();
     setTimeout(() => {
       setGuests([...guests, createdGuest]);
-    }, 10);
+    }, 0);
     setTimeout(() => {
       firstNameInputRef.current.focus(); // Timeout used to make sure the focus is changed after Buttons were disabled
     }, 10);
