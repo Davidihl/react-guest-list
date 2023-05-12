@@ -194,7 +194,7 @@ export default function App() {
             </div>
           </form>
         </Paper>
-        <Paper position="static" className={`${styles.paper}`}>
+        <Paper position="static" className={styles.paper}>
           <Typography variant="h5" component="div">
             {guests.length === 0 ? 'Guest List Empty' : 'Guest List'}
           </Typography>
