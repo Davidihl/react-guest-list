@@ -28,13 +28,11 @@ export default function App() {
   const [lastName, setLastName] = useState(''); // form field used for last name
   const [firstNameValid, setFirstNameValid] = useState(true); // validation for first name input
   const [lastNameValid, setLastNameValid] = useState(true); // validation for last name input
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // If the guest array changes, set loading to false
   useEffect(() => {
-    setTimeout(() => {
-      setLoading(false); // setTimeout is used to "fake" a delayed response for displaying the loading indicator
-    }, 0);
+    setLoading(false); // setTimeout is used to "fake" a delayed response for displaying the loading indicator
   }, [guests]);
 
   // On first load, call API and load all saved guests
