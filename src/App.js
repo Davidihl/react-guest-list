@@ -32,7 +32,7 @@ export default function App() {
 
   // If the guest array changes, set loading to false
   useEffect(() => {
-    setLoading(false); // setTimeout is used to "fake" a delayed response for displaying the loading indicator
+    setLoading(false);
   }, [guests]);
 
   // On first load, call API and load all saved guests
@@ -208,7 +208,13 @@ export default function App() {
           <Typography variant="h5" component="div">
             {guests.length === 0 ? 'Guest List Empty' : 'Guest List'}
           </Typography>
-          {loading ? <div data-test-id="guest">Loading...</div> : ''}
+          {loading ? (
+            <div data-test-id="guest" className={styles.loading}>
+              Loading...
+            </div>
+          ) : (
+            ''
+          )}
           <div className={styles.guestList}>
             {guests.map((guest, index) => {
               return (
