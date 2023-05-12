@@ -41,7 +41,6 @@ export default function App() {
       setLoading(true);
       const response = await fetch(`${baseUrl}/guests`);
       const allGuests = await response.json();
-
       setGuests(allGuests);
     }
 
@@ -52,7 +51,6 @@ export default function App() {
 
   // API create user
   async function addGuest() {
-    setLoading(true);
     const response = await fetch(`${baseUrl}/guests`, {
       method: 'POST',
       headers: {
@@ -76,7 +74,6 @@ export default function App() {
 
   // API update attending
   async function handleAttending(index) {
-    setLoading(true);
     const response = await fetch(`${baseUrl}/guests/${guests[index].id}`, {
       method: 'PUT',
       headers: {
@@ -92,7 +89,6 @@ export default function App() {
 
   // API delete user
   async function deleteGuest(guestId) {
-    setLoading(true);
     const response = await fetch(`${baseUrl}/guests/${guestId}`, {
       method: 'DELETE',
     });
