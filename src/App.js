@@ -32,7 +32,9 @@ export default function App() {
 
   // If the guest array changes, set loading to false
   useEffect(() => {
-    setLoading(false);
+    setTimeout(() => {
+      setLoading(false);
+    }, 3000);
   }, [guests]);
 
   // On first load, call API and load all saved guests
