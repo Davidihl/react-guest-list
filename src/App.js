@@ -32,8 +32,6 @@ export default function App() {
 
   // If the guest array changes, set loading to false
   useEffect(() => {
-    console.log('loading finished');
-    setTimeout;
     setLoading(false);
   }, [guests]);
 
@@ -70,6 +68,34 @@ export default function App() {
     setLastName('');
   }
 
+  // API update attending
+  async function handleAttending(index) {
+    const response = await fetch(`${baseUrl}/guests/${guests[index].id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ attending: !guests[index].attending }),
+    });
+    const updatedGuest = await response.json();
+    const isAttending = [...guests];
+    isAttending[index].attending = updatedGuest.attending;
+    setGuests(isAttending);
+  }
+
+  // API delete user
+  async function deleteGuest(guestId) {
+    const response = await fetch(`${baseUrl}/guests/${guestId}`, {
+      method: 'DELETE',
+    });
+    const deletedGuest = await response.json();
+    const currentGuestlist = [...guests];
+    const newGuestlist = currentGuestlist.filter(
+      (guest) => guest.id !== deletedGuest.id,
+    );
+    setGuests(newGuestlist);
+  }
+
   // Validate the input on submit
   const formValidation = async () => {
     if (firstName.length > 0) {
@@ -89,13 +115,6 @@ export default function App() {
       setLastNameValid(false);
     }
   };
-
-  // Change attending
-  // const handleAttending = (event, index) => {
-  //   const isAttending = [...guests];
-  //   isAttending[index].attends = !isAttending[index].attends;
-  //   setGuests(isAttending);
-  // };
 
   // Deleate guest
   // const deleteGuest = (guestUid) => {
@@ -147,7 +166,7 @@ export default function App() {
               inputRef={anotherGuest}
               className={styles.textField}
               required
-              helperText="First name required"
+              helperText={firstNameValid ? ' ' : 'First name required'}
               error={!firstNameValid}
             />
             <TextField
@@ -158,7 +177,7 @@ export default function App() {
               onKeyDown={handleKeyDown}
               className={styles.textField}
               required
-              helperText="Last name required"
+              helperText={lastNameValid ? ' ' : 'Last name required'}
               error={!lastNameValid}
             />
             <div className={styles.formButton}>
@@ -180,7 +199,7 @@ export default function App() {
           <Typography variant="h5" component="div">
             {guests.length === 0 ? 'Guest List Empty' : 'Guest List'}
           </Typography>
-          {loading ? 'Loading' : ''}
+          {loading ? 'Loading...' : ''}
           {guests.map((guest, index) => {
             return (
               <div
@@ -194,14 +213,15 @@ export default function App() {
 
                 <div className={styles.guestControl}>
                   <span>
-                    {guest.attends ? 'is attending' : 'is not attending'}
+                    {guest.attending ? 'is attending' : 'is not attending'}
                   </span>
                   <Switch
-                    onClick={(event) => handleAttending(event, index)}
+                    checked={guest.attending}
+                    onClick={() => handleAttending(index)}
                     aria-label={`attending ${guest.firstName} ${guest.lastName}`}
                   />
                   <IconButton
-                    onClick={() => deleteGuest(guest.uid)}
+                    onClick={() => deleteGuest(guest.id)}
                     aria-label={`Remove ${guest.firstName} ${guest.lastName}`}
                   >
                     <DeleteIcon />
