@@ -66,7 +66,9 @@ export default function App() {
       }),
     });
     const createdGuest = await response.json();
-    setGuests([...guests, createdGuest]);
+    setTimeout(() => {
+      setGuests([...guests, createdGuest]);
+    }, 10);
     setTimeout(() => {
       firstNameInputRef.current.focus(); // Timeout used to make sure the focus is changed after Buttons were disabled
     }, 10);
