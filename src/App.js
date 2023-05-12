@@ -19,7 +19,7 @@ import styles from './App.module.scss';
 
 export default function App() {
   // API configuration
-  const baseUrl = 'http://localhost:4000';
+  const baseUrl = 'https://5227b541-5650-4cb9-9fa2-0f82d9aace3c.id.repl.co';
 
   // Guest list variables
   const firstNameInputRef = useRef(null); // Used for changing the focus on first name after first submit
