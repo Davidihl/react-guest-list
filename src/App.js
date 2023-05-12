@@ -155,7 +155,6 @@ export default function App() {
           <Typography variant="h5" component="div">
             Add Guests
           </Typography>
-          </label>
           <form
             className={styles.form}
             onSubmit={(event) => event.preventDefault()}
