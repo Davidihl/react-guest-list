@@ -219,6 +219,9 @@ export default function App() {
                       checked={guest.attending}
                       onClick={() => handleAttending(index)}
                       aria-label={`${guest.firstName} ${guest.lastName} attending ${guest.attending}`}
+                      inputProps={{
+                        'aria-label': `${guest.firstName} ${guest.lastName} attending ${guest.attending}`,
+                      }}
                       disabled={loading}
                     />
                     <IconButton
