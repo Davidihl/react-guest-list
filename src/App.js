@@ -104,6 +104,14 @@ export default function App() {
     setGuests(newGuestlist);
   }
 
+  // API delete all
+  async function deleteAll() {
+    for (const guest of guests) {
+      await deleteGuest(guest.id);
+    }
+    setGuests([]);
+  }
+
   // Validate the input on submit
   const formValidation = async () => {
     if (firstName.length > 0) {
@@ -141,7 +149,9 @@ export default function App() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Guest list
           </Typography>
-          <Button color="inherit">Clear all</Button>
+          <Button color="inherit" onClick={() => deleteAll()}>
+            Clear all
+          </Button>
         </Toolbar>
       </AppBar>
       <LinearProgress
