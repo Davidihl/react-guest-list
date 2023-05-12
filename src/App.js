@@ -34,7 +34,7 @@ export default function App() {
   useEffect(() => {
     setTimeout(() => {
       setLoading(false); // setTimeout is used to "fake" a delayed response for displaying the loading indicator
-    }, 3000);
+    }, 0);
   }, [guests]);
 
   // On first load, call API and load all saved guests
