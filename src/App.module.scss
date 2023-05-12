@@ -14,10 +14,10 @@
 
 .form {
   display: flex;
-  gap: 24px;
-  align-items: center;
+  margin-bottom: 8px;
   flex-wrap: wrap;
   padding-top: 32px;
+  gap: 24px;
 }
 
 .guest {
@@ -30,7 +30,7 @@
 
 .guestList {
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   width: 100%;
 }
 
@@ -50,5 +50,5 @@
 .formButton {
   display: flex;
   align-self: start;
-  padding-top: 16px;
+  padding-top: 12px;
 }

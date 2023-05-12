@@ -22,7 +22,7 @@ export default function App() {
   const baseUrl = 'http://localhost:4000';
 
   // Guest list variables
-  const anotherGuest = useRef(null); // Used for changing the focus on first name after first submit
+  const firstNameInputRef = useRef(null); // Used for changing the focus on first name after first submit
   const [guests, setGuests] = useState([]); // Array to store and render the guest list
   const [firstName, setFirstName] = useState(''); // form field used for first name
   const [lastName, setLastName] = useState(''); // form field used for last name
@@ -33,13 +33,14 @@ export default function App() {
   // If the guest array changes, set loading to false
   useEffect(() => {
     setTimeout(() => {
-      setLoading(false);
-    }, 3000);
+      setLoading(false); // setTimeout is used to "fake" a delayed response for displaying the loading indicator
+    }, 0);
   }, [guests]);
 
   // On first load, call API and load all saved guests
   useEffect(() => {
     async function getAllGuests() {
+      setLoading(true);
       const response = await fetch(`${baseUrl}/guests`);
       const allGuests = await response.json();
 
@@ -53,6 +54,7 @@ export default function App() {
 
   // API create user
   async function addGuest() {
+    setLoading(true);
     const response = await fetch(`${baseUrl}/guests`, {
       method: 'POST',
       headers: {
@@ -65,13 +67,16 @@ export default function App() {
     });
     const createdGuest = await response.json();
     setGuests([...guests, createdGuest]);
-    anotherGuest.current.focus();
+    setTimeout(() => {
+      firstNameInputRef.current.focus(); // Timeout used to make sure the focus is changed after Buttons were disabled
+    }, 10);
     setFirstName('');
     setLastName('');
   }
 
   // API update attending
   async function handleAttending(index) {
+    setLoading(true);
     const response = await fetch(`${baseUrl}/guests/${guests[index].id}`, {
       method: 'PUT',
       headers: {
@@ -87,6 +92,7 @@ export default function App() {
 
   // API delete user
   async function deleteGuest(guestId) {
+    setLoading(true);
     const response = await fetch(`${baseUrl}/guests/${guestId}`, {
       method: 'DELETE',
     });
@@ -117,15 +123,6 @@ export default function App() {
       setLastNameValid(false);
     }
   };
-
-  // Deleate guest
-  // const deleteGuest = (guestUid) => {
-  //   const currentGuestlist = [...guests];
-  //   const newGuestlist = currentGuestlist.filter(
-  //     (guest) => guest.uid !== guestUid,
-  //   );
-  //   setGuests(newGuestlist);
-  // };
 
   // Add user to array by pressing enter
   const handleKeyDown = async (event) => {
@@ -165,11 +162,12 @@ export default function App() {
               variant="filled"
               value={firstName}
               onChange={(event) => setFirstName(event.currentTarget.value)}
-              inputRef={anotherGuest}
+              inputRef={firstNameInputRef}
               className={styles.textField}
               required
               helperText={firstNameValid ? ' ' : 'First name required'}
               error={!firstNameValid}
+              disabled={loading}
             />
             <TextField
               label="Last name"
@@ -181,6 +179,7 @@ export default function App() {
               required
               helperText={lastNameValid ? ' ' : 'Last name required'}
               error={!lastNameValid}
+              disabled={loading}
             />
             <div className={styles.formButton}>
               <Button
@@ -188,50 +187,52 @@ export default function App() {
                 size="large"
                 onClick={() => formValidation()}
                 color="secondary"
+                disabled={loading}
               >
                 Add guest
               </Button>
             </div>
           </form>
         </Paper>
-        <Paper
-          position="static"
-          className={`${styles.paper} ${styles.guestList}`}
-        >
+        <Paper position="static" className={`${styles.paper}`}>
           <Typography variant="h5" component="div">
             {guests.length === 0 ? 'Guest List Empty' : 'Guest List'}
           </Typography>
           {loading ? 'Loading...' : ''}
-          {guests.map((guest, index) => {
-            return (
-              <div
-                key={`guest-${guest.id}`}
-                data-test-id="guest"
-                className={styles.guest}
-              >
-                <div>
-                  {guest.firstName} {guest.lastName}
-                </div>
+          <div className={styles.guestList}>
+            {guests.map((guest, index) => {
+              return (
+                <div
+                  key={`guest-${guest.id}`}
+                  data-test-id="guest"
+                  className={styles.guest}
+                >
+                  <div>
+                    {guest.firstName} {guest.lastName}
+                  </div>
 
-                <div className={styles.guestControl}>
-                  <span>
-                    {guest.attending ? 'is attending' : 'is not attending'}
-                  </span>
-                  <Switch
-                    checked={guest.attending}
-                    onClick={() => handleAttending(index)}
-                    aria-label={`attending ${guest.firstName} ${guest.lastName}`}
-                  />
-                  <IconButton
-                    onClick={() => deleteGuest(guest.id)}
-                    aria-label={`Remove ${guest.firstName} ${guest.lastName}`}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+                  <div className={styles.guestControl}>
+                    <span>
+                      {guest.attending ? 'is attending' : 'is not attending'}
+                    </span>
+                    <Switch
+                      checked={guest.attending}
+                      onClick={() => handleAttending(index)}
+                      aria-label={`attending ${guest.firstName} ${guest.lastName}`}
+                      disabled={loading}
+                    />
+                    <IconButton
+                      onClick={() => deleteGuest(guest.id)}
+                      aria-label={`Remove ${guest.firstName} ${guest.lastName}`}
+                      disabled={loading}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </Paper>
       </Container>
     </Box>
