@@ -161,22 +161,26 @@ export default function App() {
               helperText="Last name required"
               error={!lastNameValid}
             />
-            <Button
-              variant="contained"
-              size="large"
-              onClick={() => formValidation()}
-              color="secondary"
-              className={styles.formButton}
-            >
-              Add guest
-            </Button>
+            <div className={styles.formButton}>
+              <Button
+                variant="contained"
+                size="large"
+                onClick={() => formValidation()}
+                color="secondary"
+              >
+                Add guest
+              </Button>
+            </div>
           </form>
         </Paper>
         <Paper
           position="static"
           className={`${styles.paper} ${styles.guestList}`}
         >
-          Loading
+          <Typography variant="h5" component="div">
+            {guests.length === 0 ? 'Guest List Empty' : 'Guest List'}
+          </Typography>
+          {loading ? 'Loading' : ''}
           {guests.map((guest, index) => {
             return (
               <div
@@ -207,7 +211,6 @@ export default function App() {
             );
           })}
         </Paper>
-        <button onClick={() => formValidation()}>Debug</button>
       </Container>
     </Box>
   );
