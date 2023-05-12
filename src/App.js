@@ -102,6 +102,7 @@ export default function App() {
 
   // API delete all
   async function deleteAll() {
+    setLoading(true);
     for (const guest of guests) {
       await deleteGuest(guest.id);
     }
