@@ -7,6 +7,7 @@ import {
   Container,
   Icon,
   IconButton,
+  LinearProgress,
   Paper,
   Switch,
   TextField,
@@ -27,6 +28,14 @@ export default function App() {
   const [lastName, setLastName] = useState(''); // form field used for last name
   const [firstNameValid, setFirstNameValid] = useState(true); // validation for first name input
   const [lastNameValid, setLastNameValid] = useState(true); // validation for last name input
+  const [loading, setLoading] = useState(true);
+
+  // If the guest array changes, set loading to false
+  useEffect(() => {
+    console.log('loading finished');
+    setTimeout;
+    setLoading(false);
+  }, [guests]);
 
   // On first load, call API and load all saved guests
   useEffect(() => {
@@ -117,6 +126,10 @@ export default function App() {
           <Button color="inherit">Clear all</Button>
         </Toolbar>
       </AppBar>
+      <LinearProgress
+        style={{ display: loading ? 'block' : 'none' }}
+        color="primary"
+      />
       <Container maxWidth="md">
         <Paper position="static" className={styles.paper}>
           <Typography variant="h5" component="div">
@@ -163,6 +176,7 @@ export default function App() {
           position="static"
           className={`${styles.paper} ${styles.guestList}`}
         >
+          Loading
           {guests.map((guest, index) => {
             return (
               <div
