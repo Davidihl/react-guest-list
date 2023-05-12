@@ -218,7 +218,7 @@ export default function App() {
                     <Switch
                       checked={guest.attending}
                       onClick={() => handleAttending(index)}
-                      aria-label={`attending ${guest.firstName} ${guest.lastName}`}
+                      aria-label={`${guest.firstName} ${guest.lastName} attending ${guest.attending}`}
                       disabled={loading}
                     />
                     <IconButton
