@@ -28,7 +28,7 @@ export default function App() {
   const [lastName, setLastName] = useState(''); // form field used for last name
   const [firstNameValid, setFirstNameValid] = useState(true); // validation for first name input
   const [lastNameValid, setLastNameValid] = useState(true); // validation for last name input
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   // If the guest array changes, set loading to false
   useEffect(() => {
@@ -40,6 +40,7 @@ export default function App() {
   // On first load, call API and load all saved guests
   useEffect(() => {
     async function getAllGuests() {
+      setLoading(true);
       const response = await fetch(`${baseUrl}/guests`);
       const allGuests = await response.json();
 
@@ -154,13 +155,6 @@ export default function App() {
           <Typography variant="h5" component="div">
             Add Guests
           </Typography>
-          <label>
-            First name
-            <input
-              value={firstName}
-              onChange={(event) => setFirstName(event.currentTarget.value)}
-              disabled={loading}
-            />
           </label>
           <form
             className={styles.form}
