@@ -142,15 +142,22 @@ export default function App() {
   }
 
   // API delete all
-
-  async function deleteAll() {
+  function deleteAll() {
     setLoading(true);
-    setFilter('none');
+    setFilter('none'); // Remove filter
 
-    for (const guest of guests) {
-      await deleteGuest(guest.id);
+    async function getAllGuests() {
+      setLoading(true);
+      const response = await fetch(`${baseUrl}/guests`);
+      const allGuests = await response.json();
+      for (const guest of allGuests) {
+        await deleteGuest(guest.id);
+      }
     }
 
+    getAllGuests().catch((error) => {
+      console.log(error);
+    });
     setGuests([]);
   }
 
@@ -193,9 +200,9 @@ export default function App() {
           </Typography>
           <Button
             color="inherit"
-            onClick={async () => {
+            onClick={() => {
               setFilter('none');
-              await deleteAll();
+              deleteAll();
             }}
           >
             Clear all
