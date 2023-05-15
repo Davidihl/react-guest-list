@@ -33,7 +33,8 @@ export default function App() {
   const [lastNameValid, setLastNameValid] = useState(true); // validation for last name input
   const [loading, setLoading] = useState(true); // trigger to show loading animation/information
   const [showFilter, setShowFilter] = useState(false); // variable to show the filter menu
-  const [filterAmount, setFilterAmount] = useState(0); // if a filter is set, show it next to the eicon
+  const [filterAmount, setFilterAmount] = useState(0); // if a filter is set, show it next to the icon
+  const [filter, setFilter] = useState(''); //
 
   // useEffect(() => console.log('debug filter: ' + showFilter), [showFilter]);
 
@@ -60,6 +61,37 @@ export default function App() {
       console.log(error);
     });
   }, []);
+
+  // Filter the array
+  useEffect(() => {
+    async function runFilter() {
+      setLoading(true);
+      const response = await fetch(`${baseUrl}/guests`);
+      const allGuests = await response.json();
+
+      if (filter === 'attending') {
+        const filteredGuests = allGuests.filter(
+          (guest) => guest.attending === true,
+        );
+        setGuests(filteredGuests);
+        setFilterAmount(1);
+      } else if (filter === 'notAttending') {
+        const filteredGuests = allGuests.filter(
+          (guest) => guest.attending === false,
+        );
+        setGuests(filteredGuests);
+        setFilterAmount(1);
+      } else if (filter === 'none') {
+        setGuests(allGuests);
+        setFilterAmount(0);
+      }
+      setShowFilter(false);
+    }
+
+    runFilter().catch((error) => {
+      console.log(error);
+    });
+  }, [filter]);
 
   // API create user
   async function addGuest() {
@@ -228,11 +260,8 @@ export default function App() {
             <FilterMenu
               showFilter={showFilter}
               setShowFilter={setShowFilter}
-              setGuests={setGuests}
-              guests={guests}
-              setLoading={setLoading}
-              baseUrl={baseUrl}
-              setFilterAmount={setFilterAmount}
+              filter={filter}
+              setFilter={setFilter}
             />
           </div>
           {loading ? (
