@@ -32,15 +32,13 @@ export default function App() {
   const [firstNameValid, setFirstNameValid] = useState(true); // validation for first name input
   const [lastNameValid, setLastNameValid] = useState(true); // validation for last name input
   const [loading, setLoading] = useState(true); // trigger to show loading animation/information
-  const [showFilter, setShowFilter] = useState(false); // variable to show the filter menu
+  const [showFilterMenu, setShowFilterMenu] = useState(false); // variable to show the filter menu
   const [filterAmount, setFilterAmount] = useState(0); // if a filter is set, show it next to the icon
-  const [filter, setFilter] = useState(''); //
-
-  // useEffect(() => console.log('debug filter: ' + showFilter), [showFilter]);
+  const [filter, setFilter] = useState('none'); // indicator for when there is a filter set
 
   function handleFilter() {
-    const showMenu = showFilter;
-    setShowFilter(!showMenu);
+    const showMenu = showFilterMenu;
+    setShowFilterMenu(!showMenu);
   }
 
   // If the guest array changes, set loading to false
@@ -56,11 +54,10 @@ export default function App() {
       const allGuests = await response.json();
       setGuests(allGuests);
     }
-
     getAllGuests().catch((error) => {
       console.log(error);
     });
-  }, []);
+  }, [filter]);
 
   // Filter the array
   useEffect(() => {
@@ -85,7 +82,7 @@ export default function App() {
         setGuests(allGuests);
         setFilterAmount(0);
       }
-      setShowFilter(false);
+      setShowFilterMenu(false);
     }
 
     runFilter().catch((error) => {
@@ -145,11 +142,15 @@ export default function App() {
   }
 
   // API delete all
+
   async function deleteAll() {
     setLoading(true);
+    setFilter('none');
+
     for (const guest of guests) {
       await deleteGuest(guest.id);
     }
+
     setGuests([]);
   }
 
@@ -190,7 +191,13 @@ export default function App() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Guest list
           </Typography>
-          <Button color="inherit" onClick={() => deleteAll()}>
+          <Button
+            color="inherit"
+            onClick={async () => {
+              setFilter('none');
+              await deleteAll();
+            }}
+          >
             Clear all
           </Button>
         </Toolbar>
@@ -258,8 +265,8 @@ export default function App() {
               </IconButton>
             </Toolbar>
             <FilterMenu
-              showFilter={showFilter}
-              setShowFilter={setShowFilter}
+              showFilter={showFilterMenu}
+              setShowFilter={setShowFilterMenu}
               filter={filter}
               setFilter={setFilter}
             />
