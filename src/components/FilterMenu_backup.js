@@ -4,7 +4,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styles from './FilterMenu.module.scss';
 
 export default function FilterMenu(props) {
@@ -39,35 +39,6 @@ export default function FilterMenu(props) {
     }
   }
 
-  useEffect(() => {
-    async function runFilter() {
-      props.setLoading(true);
-      const response = await fetch(`${props.baseUrl}/guests`);
-      const allGuests = await response.json();
-
-      if (filter === 'attending') {
-        const filteredGuests = allGuests.filter(
-          (guest) => guest.attending === true,
-        );
-        props.setGuests(filteredGuests);
-        props.setFilterAmount(1);
-      } else if (filter === 'notAttending') {
-        const filteredGuests = allGuests.filter(
-          (guest) => guest.attending === false,
-        );
-        props.setGuests(filteredGuests);
-        props.setFilterAmount(1);
-      } else if (filter === 'none') {
-        props.setGuests(allGuests);
-      }
-      props.setShowFilter(false);
-    }
-
-    runFilter().catch((error) => {
-      console.log(error);
-    });
-  }, [filter]);
-
   return (
     <Paper
       elevation={6}
@@ -97,16 +68,30 @@ export default function FilterMenu(props) {
               setFilter('notAttending');
             }}
           />
-          <FormControlLabel
-            value="none"
-            control={<Radio />}
-            label="none"
-            onChange={() => {
-              setFilter('none');
-            }}
-          />
         </RadioGroup>
       </FormControl>
+      <div className={styles.filterButtons}>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={async () => {
+            await selectFilter(filter);
+            props.setShowFilter(false);
+          }}
+        >
+          Save
+        </Button>
+        <Button
+          onClick={() => {
+            props.setShowFilter(false);
+            resetFilter().catch((error) => {
+              console.log(error);
+            });
+          }}
+        >
+          Reset filter
+        </Button>
+      </div>
     </Paper>
   );
 }
