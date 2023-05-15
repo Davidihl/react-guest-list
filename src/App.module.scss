@@ -56,3 +56,14 @@
 .loading {
   padding: 24px 0;
 }
+
+.guestListHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.filterIcon {
+  justify-content: end;
+}

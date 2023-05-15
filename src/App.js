@@ -1,7 +1,9 @@
 import DeleteIcon from '@mui/icons-material/Delete';
+import FilterListIcon from '@mui/icons-material/FilterList';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import {
   AppBar,
+  Badge,
   Box,
   Button,
   Container,
@@ -16,6 +18,7 @@ import {
 } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import styles from './App.module.scss';
+import FilterMenu from './components/FilterMenu';
 
 export default function App() {
   // API configuration
@@ -28,7 +31,16 @@ export default function App() {
   const [lastName, setLastName] = useState(''); // form field used for last name
   const [firstNameValid, setFirstNameValid] = useState(true); // validation for first name input
   const [lastNameValid, setLastNameValid] = useState(true); // validation for last name input
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // trigger to show loading animation/information
+  const [showFilter, setShowFilter] = useState(false); // variable to show the filter menu
+  const [filterAmount, setFilterAmount] = useState(0); // if a filter is set, show it next to the eicon
+
+  // useEffect(() => console.log('debug filter: ' + showFilter), [showFilter]);
+
+  function handleFilter() {
+    const showMenu = showFilter;
+    setShowFilter(!showMenu);
+  }
 
   // If the guest array changes, set loading to false
   useEffect(() => {
@@ -202,9 +214,27 @@ export default function App() {
           </form>
         </Paper>
         <Paper position="static" className={styles.paper}>
-          <Typography variant="h5" component="div">
-            {guests.length === 0 ? 'Guest List Empty' : 'Guest List'}
-          </Typography>
+          <div className={styles.guestListHeader}>
+            <Typography variant="h5" component="div">
+              {guests.length === 0 ? 'Guest List Empty' : 'Guest List'}
+            </Typography>
+            <Toolbar>
+              <IconButton onClick={() => handleFilter()}>
+                <Badge badgeContent={filterAmount} color="primary" hidden>
+                  <FilterListIcon />
+                </Badge>
+              </IconButton>
+            </Toolbar>
+            <FilterMenu
+              showFilter={showFilter}
+              setShowFilter={setShowFilter}
+              setGuests={setGuests}
+              guests={guests}
+              setLoading={setLoading}
+              baseUrl={baseUrl}
+              setFilterAmount={setFilterAmount}
+            />
+          </div>
           {loading ? (
             <div data-test-id="guest" className={styles.loading}>
               Loading...
@@ -231,9 +261,9 @@ export default function App() {
                     <Switch
                       checked={guest.attending}
                       onClick={() => handleAttending(index)}
-                      aria-label={`${guest.firstName} ${guest.lastName} attending ${guest.attending}`}
+                      aria-label={`${guest.firstName} ${guest.lastName} attending ${guest.attending}`} // this wont pass drone
                       inputProps={{
-                        'aria-label': `${guest.firstName} ${guest.lastName} attending ${guest.attending}`,
+                        'aria-label': `${guest.firstName} ${guest.lastName} attending ${guest.attending}`, // this will
                       }}
                       disabled={loading}
                     />

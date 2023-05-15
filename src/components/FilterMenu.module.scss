@@ -1,0 +1,21 @@
+.filterMenu {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  z-index: 10;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.filterButtons {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 16px;
+  padding-left: 80px;
+}
+
+.hidden {
+  display: none;
+}
