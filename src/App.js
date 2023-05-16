@@ -114,21 +114,6 @@ export default function App() {
     setLastName('');
   }
 
-  // API update attending
-  async function handleAttending(index) {
-    const response = await fetch(`${baseUrl}/guests/${guests[index].id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ attending: !guests[index].attending }),
-    });
-    const updatedGuest = await response.json();
-    const isAttending = [...guests];
-    isAttending[index] = updatedGuest;
-    setGuests(isAttending);
-  }
-
   // API update entry
   async function updateGuest(index, content) {
     const response = await fetch(`${baseUrl}/guests/${guests[index].id}`, {
@@ -150,11 +135,11 @@ export default function App() {
       method: 'DELETE',
     });
     const deletedGuest = await response.json();
-    const currentGuestlist = [...guests];
-    const newGuestlist = currentGuestlist.filter(
+    const currentGuestList = [...guests];
+    const newGuestList = currentGuestList.filter(
       (guest) => guest.id !== deletedGuest.id,
     );
-    setGuests(newGuestlist);
+    setGuests(newGuestList);
   }
 
   // API delete all
@@ -319,7 +304,9 @@ export default function App() {
                     </span>
                     <Switch
                       checked={guest.attending}
-                      onClick={() => handleAttending(index)}
+                      onClick={() =>
+                        updateGuest(index, { attending: !guest.attending })
+                      }
                       aria-label={`${guest.firstName} ${guest.lastName} attending ${guest.attending}`} // this wont pass drone
                       inputProps={{
                         'aria-label': `${guest.firstName} ${guest.lastName} attending ${guest.attending}`, // this will

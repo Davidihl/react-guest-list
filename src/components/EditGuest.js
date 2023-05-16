@@ -11,14 +11,14 @@ import {
 import { useState } from 'react';
 import styles from './EditGuest.module.scss';
 
-function formValidation(firstname, lastname) {
-  if (firstname.length > 0) {
-    if (lastname.length > 0) {
+function formValidation(firstName, lastName) {
+  if (firstName.length > 0) {
+    if (lastName.length > 0) {
       return { firstNameValid: true, lastNameValid: true };
     } else {
       return { firstNameValid: true, lastNameValid: false };
     }
-  } else if (lastname.length > 0) {
+  } else if (lastName.length > 0) {
     return { firstNameValid: false, lastNameValid: true };
   } else {
     return { firstNameValid: false, lastNameValid: false };
@@ -41,14 +41,15 @@ export default function EditGuest(props) {
     setOpen(false);
   }
 
-  function handleEdit(firstname, lastname, id) {
-    const isValid = formValidation(firstname, lastname);
+  function handleEdit(firstName, lastName) {
+    const isValid = formValidation(firstName, lastName);
     setValidation(isValid);
 
     if (isValid.firstNameValid === true && isValid.lastNameValid === true) {
       console.log(props.index);
       const content = { firstName: editFirst, lastName: editLast };
       props.updateGuest(props.index, content);
+      setOpen(false);
     }
   }
 
@@ -63,7 +64,7 @@ export default function EditGuest(props) {
             <Typography id="modal-modal-title" variant="h6" component="h2">
               Edit Guest
             </Typography>
-            <div className={styles.formfields}>
+            <div className={styles.formFields}>
               <TextField
                 label="First name"
                 variant="filled"
