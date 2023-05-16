@@ -18,6 +18,7 @@ import {
 } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import styles from './App.module.scss';
+import EditGuest from './components/EditGuest';
 import FilterMenu from './components/FilterMenu';
 
 export default function App() {
@@ -63,24 +64,24 @@ export default function App() {
   useEffect(() => {
     async function runFilter() {
       setLoading(true);
-      const response = await fetch(`${baseUrl}/guests`);
-      const allGuests = await response.json();
+      const response = await fetch(`${baseUrl}/guests`); // Fetch all the users, to make sure that while switching filters,
+      const allGuests = await response.json(); // new users get considered too!
 
       if (filter === 'attending') {
         const filteredGuests = allGuests.filter(
           (guest) => guest.attending === true,
         );
-        setGuests(filteredGuests);
-        setFilterAmount(1);
+        setGuests(filteredGuests); // filter for attending guests
+        setFilterAmount(1); // show that a filter is used
       } else if (filter === 'notAttending') {
         const filteredGuests = allGuests.filter(
           (guest) => guest.attending === false,
         );
-        setGuests(filteredGuests);
-        setFilterAmount(1);
+        setGuests(filteredGuests); // filter for not attending guests
+        setFilterAmount(1); // show that a filter is used
       } else if (filter === 'none') {
-        setGuests(allGuests);
-        setFilterAmount(0);
+        setGuests(allGuests); // remove filter, show the whole array
+        setFilterAmount(0); // remove filter indicator
       }
       setShowFilterMenu(false);
     }
@@ -124,8 +125,23 @@ export default function App() {
     });
     const updatedGuest = await response.json();
     const isAttending = [...guests];
-    isAttending[index].attending = updatedGuest.attending;
+    isAttending[index] = updatedGuest;
     setGuests(isAttending);
+  }
+
+  // API update entry
+  async function updateGuest(index, content) {
+    const response = await fetch(`${baseUrl}/guests/${guests[index].id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(content),
+    });
+    const updatedGuest = await response.json();
+    const updatedGuestList = [...guests];
+    updatedGuestList[index] = updatedGuest;
+    setGuests(updatedGuestList);
   }
 
   // API delete user
@@ -309,6 +325,11 @@ export default function App() {
                         'aria-label': `${guest.firstName} ${guest.lastName} attending ${guest.attending}`, // this will
                       }}
                       disabled={loading}
+                    />
+                    <EditGuest
+                      index={index}
+                      id={guest.id}
+                      updateGuest={updateGuest}
                     />
                     <IconButton
                       onClick={() => deleteGuest(guest.id)}
