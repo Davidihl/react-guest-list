@@ -47,7 +47,7 @@ export default function App() {
     setLoading(false);
   }, [guests]);
 
-  // On first load, call API and load all saved guests
+  // On first load, and if filter changes call API and load all saved guests
   useEffect(() => {
     async function getAllGuests() {
       setLoading(true);
@@ -58,7 +58,7 @@ export default function App() {
     getAllGuests().catch((error) => {
       console.log(error);
     });
-  }, [filter]);
+  }, []);
 
   // Filter the array
   useEffect(() => {
@@ -210,10 +210,16 @@ export default function App() {
           </Button>
         </Toolbar>
       </AppBar>
-      <LinearProgress
-        style={{ display: loading ? 'block' : 'none' }}
-        color="primary"
-      />
+
+      <div className={styles.wrapper}>
+        <div className={styles.loadingBar}>
+          <LinearProgress
+            style={{ display: loading ? 'block' : 'none' }}
+            color="primary"
+          />
+        </div>
+      </div>
+
       <Container maxWidth="md">
         <Paper position="static" className={styles.paper}>
           <Typography variant="h5" component="div">
@@ -315,8 +321,9 @@ export default function App() {
                     />
                     <EditGuest
                       index={index}
-                      id={guest.id}
                       updateGuest={updateGuest}
+                      firstName={guest.firstName}
+                      lastName={guest.lastName}
                     />
                     <IconButton
                       onClick={() => deleteGuest(guest.id)}

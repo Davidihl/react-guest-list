@@ -26,8 +26,8 @@ function formValidation(firstName, lastName) {
 }
 
 export default function EditGuest(props) {
-  const [editFirst, setEditFirst] = useState('');
-  const [editLast, setEditLast] = useState('');
+  const [editFirst, setEditFirst] = useState(props.firstName);
+  const [editLast, setEditLast] = useState(props.lastName);
   const [open, setOpen] = useState(false);
   const [validation, setValidation] = useState({
     firstNameValid: true,
